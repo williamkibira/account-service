@@ -1,11 +1,11 @@
 from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func
 from sqlalchemy.orm import relationship
 
-from app.core.database.base import Base
+from app.core.database.base import BaseModel
 from app.domain.acm.roles.models import Role
 
 
-class User(Base):
+class User(BaseModel):
     __tablename__ = 'user_tb'
     id = Column(Integer, primary_key=True)
     first_name = Column(String)
