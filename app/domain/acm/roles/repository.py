@@ -22,7 +22,7 @@ class RoleRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def remove(self, identifier: str):
+    def remove(self, name: str):
         raise NotImplementedError
 
     @abc.abstractmethod
