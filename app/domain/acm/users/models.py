@@ -1,8 +1,13 @@
-from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func
+from sqlalchemy import Column, DateTime, String, Integer, ForeignKey, func, Table
 from sqlalchemy.orm import relationship
 
 from app.core.database.base import BaseModel
 from app.domain.acm.roles.models import Role
+
+association_table = Table('user_roles', BaseModel.metadata,
+                          Column('user_id', Integer, ForeignKey('user_tb.id'), primary_key=True),
+                          Column('role_id', Integer, ForeignKey('role_tb.id'), primary_key=True)
+                          )
 
 
 class User(BaseModel):
@@ -14,13 +19,7 @@ class User(BaseModel):
     password = Column(String)
     created_on = Column(DateTime, default=func.now())
     updated_on = Column(DateTime, default=func.now())
-    roles = relationship(
-        Role,
-        secondary='user_roles'
-    )
 
-
-class UserRoles(Base):
-    __tablename__ = 'user_roles'
-    user_id = Column(Integer, ForeignKey('user_tb.id'), primary_key=True)
-    role_id = Column(Integer, ForeignKey('role_tb.id'), primary_key=True)
+    roles = relationship(Role,
+                         secondary=association_table,
+                         backref="users")

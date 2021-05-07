@@ -10,7 +10,7 @@ class SQLMigrationHandler(object):
             database_url=database_url,
             base_migration_folder=migration_folder
         )
-
+        print("PATH TO MIGRATIONS: {}".format(resolved_migration_folder_path))
         self.__migrations = read_migrations(resolved_migration_folder_path)
 
     @staticmethod

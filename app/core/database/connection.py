@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 
 
-class SmartSession(Session):
+class SmartSession:
     def __init__(self, session: Session):
         self.__session = session
 
@@ -10,8 +10,7 @@ class SmartSession(Session):
 
     def __exit__(self, type, value, traceback):
         try:
-            if self.is_active:
-                self.__session.commit()
+            self.__session.commit()
         except Exception as e:
             self.__session.rollback()
             raise e

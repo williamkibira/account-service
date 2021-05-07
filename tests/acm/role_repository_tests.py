@@ -1,37 +1,29 @@
 import unittest
 from typing import List
 
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, scoped_session
-
-from app.core.database.base import BaseModel
 from app.core.database.connection import DataSource
 from app.domain.acm.roles.models import Role
 from app.domain.acm.roles.repository import RoleRepository
 from app.domain.acm.roles.sql_repository import SQLRoleRepository
-from app.settings import DATABASE_URL
+from tests.utilities.storage_testing import DatabaseResourceTests
 
 
-class RoleRepositoryTests(unittest.TestCase):
+class RoleRepositoryTests(DatabaseResourceTests):
 
     def setUp(self) -> None:
-        engine = create_engine(
-            DATABASE_URL,
-            echo=True
-        )
+        super(RoleRepositoryTests, self).setUp()
+        self.repository: RoleRepository = SQLRoleRepository(data_source=DataSource(session=self.session))
 
-        session_factory = sessionmaker(bind=engine)
-        session = scoped_session(session_factory)
-        BaseModel.set_session(session=session)
-        BaseModel.prepare(engine, reflect=True)
-        self.repository: RoleRepository = SQLRoleRepository(data_source=DataSource(session=session))
+    def tearDown(self) -> None:
+        super(RoleRepositoryTests, self).tearDown()
 
     def test_can_add_role(self):
         self.repository.save(name="ADMINISTRATOR")
         roles: List[Role] = self.repository.fetch_all()
+        print(roles)
         self.assertEquals(1, len(roles))
         self.assertEquals("ADMINISTRATOR", roles[0].name)
-        self.assertEquals(1, roles[0].idx)
+        self.assertEquals(1, roles[0].index)
 
     # test case function to check the Person.get_name function
     def test_can_search_for_role(self):
