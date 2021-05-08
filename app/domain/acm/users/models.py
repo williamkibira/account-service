@@ -12,14 +12,15 @@ association_table = Table('user_roles', BaseModel.metadata,
 
 class User(BaseModel):
     __tablename__ = 'user_tb'
-    id = Column(Integer, primary_key=True)
-    first_name = Column(String)
-    last_name = Column(String)
-    email = Column(String)
-    password = Column(String)
-    created_on = Column(DateTime, default=func.now())
-    updated_on = Column(DateTime, default=func.now())
-
+    id = Column('id',  Integer, primary_key=True)
+    identifier = Column('identifier', String)
+    first_name = Column('first_name', String)
+    last_name = Column('last_name', String)
+    email_address = Column('email_address', String)
+    password = Column('password', String)
+    created_on = Column('created_on', DateTime, default=func.now())
+    updated_on = Column('updated_on', DateTime, default=func.now())
+    index = Column('idx', Integer)
     roles = relationship(Role,
                          secondary=association_table,
                          backref="users")

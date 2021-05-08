@@ -1,5 +1,5 @@
 import abc
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from app.domain.acm.users.models import User
 
@@ -20,11 +20,15 @@ class UserRepository(metaclass=abc.ABCMeta):
                 NotImplemented)
 
     @abc.abstractmethod
-    def save(self, user: User):
+    def save(self, user: User, roles: List[str]):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def update(self, identifier: str, changes: Dict):
+    def update(self, identifier: str, changes: Dict, added_roles: List[str], removed_roles: List[str]):
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def fetch_by_identifier(self, identifier: str) -> Optional[User]:
         raise NotImplementedError
 
     @abc.abstractmethod
