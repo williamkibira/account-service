@@ -32,13 +32,13 @@ class UserRepositoryTests(DatabaseResourceTests):
         )
         self.user_repository.save(user=user, roles=['ADMINISTRATOR'])
         result: Optional[User] = self.user_repository.fetch_by_identifier(identifier=identifier)
-        self.assertEquals(identifier, result.identifier)
-        self.assertEquals(user.first_name, result.first_name)
-        self.assertEquals(user.last_name, result.last_name)
-        self.assertEquals(user.email_address, result.email_address)
-        self.assertEquals(user.password, result.password)
-        self.assertIsNotNone(result.created_on)
-        self.assertEquals('ADMINISTRATOR', result.roles[0].name)
+        self.assertEqual(identifier, result.identifier)
+        self.assertEqual(user.first_name, result.first_name)
+        self.assertEqual(user.last_name, result.last_name)
+        self.assertEqual(user.email_address, result.email_address)
+        self.assertEqual(user.password, result.password)
+        self.assertIsNotNone(result.created_at)
+        self.assertEqual('ADMINISTRATOR', result.roles[0].name)
 
     # test case function to check the Person.get_name function
     def test_can_update_user(self):
@@ -69,12 +69,12 @@ class UserRepositoryTests(DatabaseResourceTests):
             removed_roles=removed_roles
         )
         result: Optional[User] = self.user_repository.fetch_by_identifier(identifier=identifier)
-        self.assertEquals(updated_information['first_name'], result.first_name)
-        self.assertEquals(updated_information['last_name'], result.last_name)
-        self.assertEquals(updated_information['email_address'], result.email_address)
-        self.assertEquals(updated_information['password'], result.password)
+        self.assertEqual(updated_information['first_name'], result.first_name)
+        self.assertEqual(updated_information['last_name'], result.last_name)
+        self.assertEqual(updated_information['email_address'], result.email_address)
+        self.assertEqual(updated_information['password'], result.password)
         self.assertListEqual(added_roles, [role.name for role in result.roles])
-        self.assertFalse('ADMINISTRATOR' not in [role.name for role in result.roles])
+        self.assertTrue('ADMINISTRATOR' not in [role.name for role in result.roles])
 
     def test_can_search_for_user(self):
         self.role_repository.save(name='GROUP_MEMBER')

@@ -18,8 +18,8 @@ class User(BaseModel):
     last_name = Column('last_name', String)
     email_address = Column('email_address', String)
     password = Column('password', String)
-    created_on = Column('created_on', DateTime, default=func.now())
-    updated_on = Column('updated_on', DateTime, default=func.now())
+    created_at = Column('created_at', DateTime, default=func.now())
+    updated_at = Column('updated_at', DateTime, default=func.now())
     index = Column('idx', Integer)
     roles = relationship(Role,
                          secondary=association_table,

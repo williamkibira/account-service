@@ -14,8 +14,6 @@ class SmartSession:
         except Exception as e:
             self.__session.rollback()
             raise e
-        finally:
-            self.__session.close()
 
 
 class DataSource:
@@ -25,3 +23,6 @@ class DataSource:
     @property
     def session(self) -> SmartSession:
         return SmartSession(session=self.__session)
+
+    def unbound(self) -> Session:
+        return self.__session
