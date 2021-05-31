@@ -5,13 +5,19 @@ from app.core.security.password_handler import PasswordHandler
 
 
 class Configuration(object):
-    def __init__(self):
-        self.type: Type = None
-        self.memory_cost: int = None
-        self.salt_length: int = None
-        self.hash_length: int = None
-        self.parallelism: int = None
-        self.time_cost: int = None
+    def __init__(self,
+                 memory_cost: int = 102400,
+                 salt_length: int = 16,
+                 hash_length: int = 16,
+                 parallelism: int = 8,
+                 time_cost: int = 2,
+                 variant: int = 2):
+        self.variant: Type = Type(variant)
+        self.memory_cost: int = memory_cost
+        self.salt_length: int = salt_length
+        self.hash_length: int = hash_length
+        self.parallelism: int = parallelism
+        self.time_cost: int = time_cost
 
 
 class Argon2PasswordHandler(PasswordHandler):
@@ -23,7 +29,7 @@ class Argon2PasswordHandler(PasswordHandler):
             hash_len=configuration.hash_length,
             salt_len=configuration.salt_length,
             memory_cost=configuration.memory_cost,
-            type=configuration.type
+            type=configuration.variant
         )
 
     def hash(self, password: str) -> str:

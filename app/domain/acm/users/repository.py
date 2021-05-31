@@ -36,9 +36,13 @@ class UserRepository(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def fetch_batch(self, identifiers: Dict) -> List[User]:
+    def fetch_batch(self, identifiers: List) -> List[User]:
         raise NotImplementedError
 
     @abc.abstractmethod
     def search(self, query: str, limit: int, offset: int) -> List[User]:
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def fetch_by_emails(self, emails: List[str]) -> List[User]:
         raise NotImplementedError

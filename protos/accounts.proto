@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+message RegistrationDetails {
+    string first_name = 2;
+	string last_name = 3;
+	string email = 4;
+	string phone = 5;
+	bytes photo = 6;
+	string photo_content_type = 7;
+	string password = 8;
+}
+
+message UpdateDetails {
+    string first_name = 2;
+	string last_name = 3;
+	string email = 4;
+	string phone = 5;
+	bytes photo = 6;
+	string photo_content_type = 7;
+}
+
+message PasswordResetRequest {
+   string email = 1;
+}

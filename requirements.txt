@@ -35,3 +35,6 @@ sqlparse==0.4.1
 structlog==21.1.0
 tabulate==0.8.9
 yoyo-migrations==7.3.1
+
+boto3~=1.17.84
+botocore~=1.20.84

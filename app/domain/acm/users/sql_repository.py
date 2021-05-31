@@ -57,9 +57,13 @@ class SQLUserRepository(UserRepository):
         with self.__data_source.session as session:
             session.query(User).filter(User.identifier == identifier).delete()
 
-    def fetch_batch(self, identifiers: Dict) -> List[User]:
+    def fetch_batch(self, identifiers: List[str]) -> List[User]:
         session = self.__data_source.unbound()
         return [user for user in session.query(User).filter(User.identifier.in_(identifiers)).all()]
+
+    def fetch_by_emails(self, emails: List[str]) -> List[User]:
+        session = self.__data_source.unbound()
+        return [user for user in session.query(User).filter(User.email_address.in_(emails)).all()]
 
     def search(self, query: str, limit: int, offset: int) -> List[User]:
         if len(query) == 0:
