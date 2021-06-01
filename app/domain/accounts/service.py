@@ -1,3 +1,5 @@
+import falcon
+
 from app.core.security.password_handler import PasswordHandler
 from app.core.storage.storage import FileStorage
 from app.domain.accounts.accounts_pb2 import RegistrationDetails, UpdateDetails
@@ -16,3 +18,6 @@ class AccountService:
 
     def update(self, details: UpdateDetails) -> None:
         pass
+
+    def fetch_file(self, resp: falcon.Response, identifier: str) -> None:
+        self.__file_storage.fetch(resp=resp, identifier=identifier)

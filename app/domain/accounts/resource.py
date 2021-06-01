@@ -43,8 +43,8 @@ class AccountImage:
     def __init__(self, service: AccountService):
         self.__service = service
 
-    def on_get(self, req: falcon.Request, resp: falcon.Response) -> None:
-        pass
+    def on_get(self, req: falcon.Request, resp: falcon.Response, identifier: str) -> None:
+        self.__service.fetch_file(resp, identifier)
 
 
 class ReceivePasswordResetRequest:

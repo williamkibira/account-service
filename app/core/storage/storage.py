@@ -1,5 +1,7 @@
 import abc
 
+import falcon
+
 
 class FileStorage(metaclass=abc.ABCMeta):
     @classmethod
@@ -17,7 +19,7 @@ class FileStorage(metaclass=abc.ABCMeta):
         raise NotImplementedError
 
     @abc.abstractmethod
-    def fetch(self, identifier: str):
+    def fetch(self, response: falcon.Response, identifier: str) -> None:
         raise NotImplementedError
 
     @abc.abstractmethod

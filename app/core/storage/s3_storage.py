@@ -2,7 +2,10 @@ import logging
 import sys
 import threading
 from os import path
+from typing import Dict
+
 import boto3
+import falcon
 from botocore.client import BaseClient
 from botocore.config import Config
 from botocore.exceptions import ClientError
@@ -45,7 +48,8 @@ class S3FileStorage(FileStorage):
 
     def save(self, identifier: str, content: bytes, content_type: str):
         try:
-            response = self.__client.put_object(
+            response: Dict = self.__client.put_object(
+                Bucket=STORAGE_BUCKET,
                 Body=content,
                 Key=identifier,
                 Callback=ProgressPercentage(filename=identifier),
@@ -58,8 +62,20 @@ class S3FileStorage(FileStorage):
         except ClientError as e:
             logging.error(e)
 
-    def fetch(self, identifier: str):
-        pass
+    def fetch(self, response: falcon.Response, identifier: str):
+        data_object: Dict = self.__client.get_object(
+            Bucket=STORAGE_BUCKET,
+            Key=identifier
+        )
+        response.data = data_object['Body'].read()
+        response.downloadable_as = identifier
+        response.content_type = data_object['ContentType']
+        response.content_length = data_object['ContentLength']
+        response.content_range = data_object['ContentRange']
+        response.set_header(name='ContentDisposition', value=data_object['ContentDisposition'])
 
     def remove(self, identifier: str):
-        pass
+        response: Dict = self.__client.delete_object(
+            Bucket=STORAGE_BUCKET,
+            Key=identifier
+        )
