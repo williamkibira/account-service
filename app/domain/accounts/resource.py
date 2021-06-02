@@ -21,16 +21,16 @@ class AccountCreationResource:
             resp.body = json.dumps({'error': 417, 'message': str(err)})
 
 
-@Authorize(roles=['PARTICIPANT'])
+@falcon.before(Authorize(roles=['PARTICIPANT']))
 class AccountUpdateResource:
     def __init__(self, service: AccountService):
         self.__service = service
 
-    def on_put(self, req: falcon.Request, resp: falcon.Response) -> None:
+    def on_put(self, req: falcon.Request, resp: falcon.Response, identifier: str) -> None:
         try:
             details: UpdateDetails = UpdateDetails()
             details.ParseFromString(req.bounded_stream)
-            self.__service.update(details=details)
+            self.__service.update(identifier=identifier, details=details)
             resp.status = falcon.HTTP_NO_CONTENT
 
         except IOError as err:
@@ -38,7 +38,7 @@ class AccountUpdateResource:
             resp.body = json.dumps({'error': 417, 'message': str(err)})
 
 
-@Authorize(roles=['PARTICIPANT'])
+@falcon.before(Authorize(roles=['PARTICIPANT']))
 class AccountImage:
     def __init__(self, service: AccountService):
         self.__service = service
