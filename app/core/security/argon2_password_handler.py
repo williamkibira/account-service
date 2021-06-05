@@ -1,10 +1,12 @@
+from typing import Dict
+
 from argon2 import PasswordHasher, Type
 from argon2.exceptions import VerifyMismatchError
 
 from app.core.security.password_handler import PasswordHandler
 
 
-class Configuration(object):
+class Argon2Configuration(object):
     def __init__(self,
                  memory_cost: int = 102400,
                  salt_length: int = 16,
@@ -19,10 +21,21 @@ class Configuration(object):
         self.parallelism: int = parallelism
         self.time_cost: int = time_cost
 
+    @staticmethod
+    def from_content_map(content_map: Dict):
+        return Argon2Configuration(
+            memory_cost=int(content_map['argon']['memory-cost']),
+            salt_length=int(content_map['argon']['salt-length']),
+            hash_length=int(content_map['argon']['hash-length']),
+            parallelism=int(content_map['argon']['parallelism']),
+            time_cost=int(content_map['argon']['time-cost']),
+            variant=int(content_map['argon']['variant'])
+        )
+
 
 class Argon2PasswordHandler(PasswordHandler):
 
-    def __init__(self, configuration: Configuration) -> None:
+    def __init__(self, configuration: Argon2Configuration) -> None:
         self.__hasher: PasswordHasher = PasswordHasher(
             time_cost=configuration.time_cost,
             parallelism=configuration.parallelism,

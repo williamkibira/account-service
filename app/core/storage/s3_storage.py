@@ -10,8 +10,8 @@ from botocore.client import BaseClient
 from botocore.config import Config
 from botocore.exceptions import ClientError
 
+from app.core.storage.credentials import S3Credentials
 from app.core.storage.storage import FileStorage
-from settings import STORAGE_SECRET, STORAGE_REGION, STORAGE_KEY, STORAGE_HOST, STORAGE_BUCKET
 
 
 class ProgressPercentage(object):
@@ -36,20 +36,21 @@ class ProgressPercentage(object):
 
 class S3FileStorage(FileStorage):
 
-    def __init__(self):
+    def __init__(self, credentials: S3Credentials):
         self.__client: BaseClient = boto3.client(
             's3',
-            endpoint_url=STORAGE_HOST,
-            region_name=STORAGE_REGION,
-            aws_access_key_id=STORAGE_KEY,
-            aws_secret_access_key=STORAGE_SECRET,
+            endpoint_url=credentials.url(),
+            region_name=credentials.region(),
+            aws_access_key_id=credentials.key(),
+            aws_secret_access_key=credentials.secret(),
             config=Config(signature_version='s3v4'),
         )
+        self.__bucket = credentials.bucket()
 
     def save(self, identifier: str, content: bytes, content_type: str):
         try:
             response: Dict = self.__client.put_object(
-                Bucket=STORAGE_BUCKET,
+                Bucket=self.__bucket,
                 Body=content,
                 Key=identifier,
                 Callback=ProgressPercentage(filename=identifier),
@@ -64,7 +65,7 @@ class S3FileStorage(FileStorage):
 
     def fetch(self, response: falcon.Response, identifier: str):
         data_object: Dict = self.__client.get_object(
-            Bucket=STORAGE_BUCKET,
+            Bucket=self.__bucket,
             Key=identifier
         )
         response.data = data_object['Body'].read()
@@ -76,6 +77,6 @@ class S3FileStorage(FileStorage):
 
     def remove(self, identifier: str):
         response: Dict = self.__client.delete_object(
-            Bucket=STORAGE_BUCKET,
+            Bucket=self.__bucket,
             Key=identifier
         )

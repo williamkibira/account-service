@@ -1,33 +1,33 @@
 from datetime import datetime
-from typing import Dict
+from typing import List
 
 import falcon
 import simplejson as json
 from jwcrypto import jwk, jwe
-from settings import PRIVATE_RSA_KEY, PRIVATE_RSA_KEY_PASSWORD, ACCEPTED_AUDIENCE
+
+from app.core.security.claims import Claims
+from app.settings import PRIVATE_RSA_KEY
 
 
-class Authorize(object):
-    def __init__(self, roles):
-        self._roles = roles
+class Restrict(object):
+    def __init__(self, roles: List[str]):
+        self.__roles = roles
 
     def __call__(self, req: falcon.Request, resp: falcon.Response, resource, params):
         token = self.__strip_out_authorization_token(req=req)
         claims_payload = self.__extract_token_claims(encrypted_token=token)
         claims = json.loads(claims_payload)
-        if self.__is_authorized_user(claims=claims):
+        if self.__is_authorized(claims=claims):
             req.context["principals"] = claims
             req.context["access_token"] = token
         else:
             raise falcon.HTTPForbidden(title="No Authorization for this request",
                                        description="You do not have the required permissions to access this resource")
 
-    def __is_authorized_user(self, claims: Dict) -> bool:
-        token_roles = claims["roles"]
-        for role in token_roles:
-            if role in self._roles:
-                return True
-        return False
+    def __is_authorized(self, claims: Claims) -> bool:
+        if self.__roles is []:
+            return True
+        return claims.has_roles(roles=self.__roles)
 
     def __extract_token_claims(self, encrypted_token: str) -> str:
         jwe_token = jwe.JWE()
@@ -46,19 +46,15 @@ class Authorize(object):
     def __read_private_key(path: str) -> jwk.JWK:
         with open(path, "rb") as private_key_file:
             key = jwk.JWK()
-            if len(str(PRIVATE_RSA_KEY_PASSWORD)) > 0:
-                key.import_from_pem(data=private_key_file.read(), password=PRIVATE_RSA_KEY_PASSWORD)
-            else:
-                key.import_from_pem(data=private_key_file.read())
+            key.import_from_pem(data=private_key_file.read())
             return key
 
     @staticmethod
-    def __verify_claim(claim: Dict) -> None:
-        expiry_date_time = datetime.fromtimestamp(int(claim['exp']))
-        if ACCEPTED_AUDIENCE.trim() in claim['aud']:
-            raise falcon.HTTPForbidden(title="This user is not permitted to access this service",
-                                       description="You are not the intended audience for this service")
-        if expiry_date_time < datetime.datetime.now():
+    def __verify_claim(claim: Claims) -> None:
+        # if ACCEPTED_AUDIENCE.trim() in claim['aud']:
+        #     raise falcon.HTTPForbidden(title="This user is not permitted to access this service",
+        #                                description="You are not the intended audience for this service")
+        if claim.expiry() < datetime.datetime.now():
             raise falcon.HTTPUnauthorized(title="Your session has expired",
                                           description="Your current session is past its duration. \n"
                                                       "Please login again to continue")

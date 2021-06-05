@@ -1,6 +1,7 @@
 import falcon
 import simplejson as json
-from app.core.security.authorization import Authorize
+
+from app.core.security.authorization import Restrict
 from app.domain.accounts.accounts_pb2 import RegistrationDetails, UpdateDetails
 from app.domain.accounts.service import AccountService
 
@@ -12,7 +13,7 @@ class AccountCreationResource:
     def on_post(self, req: falcon.Request, resp: falcon.Response) -> None:
         try:
             details: RegistrationDetails = RegistrationDetails()
-            details.ParseFromString(req.bounded_stream)
+            details.ParseFromString(req.bounded_stream.read())
             identifier: str = self.__service.register(details=details)
             resp.status = falcon.HTTP_OK
             resp.body = json.dumps({'id': identifier})
@@ -21,7 +22,7 @@ class AccountCreationResource:
             resp.body = json.dumps({'error': 417, 'message': str(err)})
 
 
-@falcon.before(Authorize(roles=['PARTICIPANT']))
+@falcon.before(Restrict(roles=['PARTICIPANT']))
 class AccountUpdateResource:
     def __init__(self, service: AccountService):
         self.__service = service
@@ -38,8 +39,8 @@ class AccountUpdateResource:
             resp.body = json.dumps({'error': 417, 'message': str(err)})
 
 
-@falcon.before(Authorize(roles=['PARTICIPANT']))
-class AccountImage:
+@falcon.before(Restrict(roles=['PARTICIPANT']))
+class ProfilePicture:
     def __init__(self, service: AccountService):
         self.__service = service
 

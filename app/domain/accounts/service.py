@@ -3,6 +3,7 @@ from typing import Dict
 
 import falcon
 
+from app.core.logging.loggers import Logger
 from app.core.security.password_handler import PasswordHandler
 from app.core.storage.storage import FileStorage
 from app.domain.accounts.accounts_pb2 import RegistrationDetails, UpdateDetails
@@ -15,11 +16,17 @@ class AccountService:
         self.__file_storage: FileStorage = file_storage
         self.__user_repository: UserRepository = user_repository
         self.__password_handler: PasswordHandler = password_handler
-        pass
+        self.log = Logger(__file__)
 
     def register(self, details: RegistrationDetails) -> str:
         identifier = str(uuid.uuid4())
+        self.log.info("IDENTIFY: {}".format(identifier))
+        self.log.info("FIRST NAME: {}".format(details.first_name))
+        self.log.info("LAST NAME: {}".format(details.last_name))
+        self.log.info("EMAIL: {}".format(details.email))
+        self.log.info("PASSWORD: {}".format(details.password))
         hashed_password: str = self.__password_handler.hash(password=details.password)
+        self.log.info("ENCODED PASSWORD: {}".format(hashed_password))
         photo_identifier: str = self.__save_photo(content=details.photo, content_type=details.photo_content_type)
         self.__user_repository.save(
             user=User(
