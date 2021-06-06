@@ -18,7 +18,7 @@ class AuthorizationTestCase(ServerTestCase):
             path='/api/v1/account-service/accounts/register',
             content_type="application/x-protobuf",
             body=registration_details.SerializeToString()
-            )
+        )
         print(result.json)
-        #self.assertEqual(result.json, self.claims)
-
+        self.assertEqual(200, result.status_code)
+        self.assertIsInstance(result.json, dict)

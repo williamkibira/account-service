@@ -5,6 +5,7 @@ from app.app import Application
 from app.configuration import Configuration
 from app.core.database.migrations import SQLMigrationHandler
 from app.settings import MIGRATIONS_FOLDER
+from tests.utilities.resources import FakeFileStorage
 
 
 class ServerTestCase(unittest.TestCase, TestClient):
@@ -12,6 +13,7 @@ class ServerTestCase(unittest.TestCase, TestClient):
     def setUp(self) -> None:
         super(ServerTestCase, self).setUp()
         self.application = Application(configuration=self.configuration())
+        self.application.replace_file_storage(file_storage=FakeFileStorage())
         self.migration_handler = SQLMigrationHandler(
             database_url=self.configuration().database_uri(),
             migration_folder=MIGRATIONS_FOLDER

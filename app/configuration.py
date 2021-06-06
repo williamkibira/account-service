@@ -61,7 +61,8 @@ class Configuration(object):
             self,
             build_information: BuildInformation,
             content_map: Dict,
-            client: ServiceDiscoveryClient) -> None:
+            client: ServiceDiscoveryClient,
+            test_mode: bool = False) -> None:
         self.__build_information = build_information
         self.__database_uri = content_map["database"]["uri"]
         self.__port = int(content_map["port"])
@@ -70,6 +71,7 @@ class Configuration(object):
         self.__client = client
         if self.__client is not None:
             self.__register_service()
+        self.__test_mode = test_mode
 
     def __del__(self):
         if self.__client is not None:
@@ -83,6 +85,9 @@ class Configuration(object):
 
     def s3_credentials(self):
         return self.__s3_credentials
+
+    def is_in_test_mode(self):
+        return self.__test_mode
 
     def argon2_configuration(self):
         return self.__argon_configuration
@@ -112,7 +117,7 @@ class Configuration(object):
     def test():
         build_information = BuildInformation.fetch()
         content_map = Configuration.read_settings(testing=True)
-        return Configuration(build_information=build_information, content_map=content_map, client=None)
+        return Configuration(build_information=build_information, content_map=content_map, client=None, test_mode=True)
 
     @staticmethod
     def remote():

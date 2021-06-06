@@ -22,13 +22,18 @@ class Application:
     def __init__(self, configuration: Configuration):
         self.__configuration: Configuration = configuration
         self.__collector_registry: CollectorRegistry = CollectorRegistry()
+        self.__file_storage: FileStorage = None
+
+    def replace_file_storage(self, file_storage: FileStorage):
+        self.__file_storage = file_storage
 
     def __initialize(self, name: str, version: str) -> falcon.App:
         database_provider = SQLProvider(
             uri=self.__configuration.database_uri(),
             debug=config('DEBUG', default=True, cast=bool))
         database_provider.initialize()
-        file_storage: FileStorage = S3FileStorage(credentials=self.__configuration.s3_credentials())
+        if not self.__configuration.is_in_test_mode():
+            self.__file_storage = S3FileStorage(credentials=self.__configuration.s3_credentials())
 
         app: falcon.App = falcon.App(
             cors_enable=True,
@@ -40,7 +45,7 @@ class Application:
         password_handler: PasswordHandler = Argon2PasswordHandler(
             configuration=self.__configuration.argon2_configuration()
         )
-        account_service = AccountService(file_storage=file_storage,
+        account_service = AccountService(file_storage=self.__file_storage,
                                          user_repository=user_repository,
                                          password_handler=password_handler)
         app.add_route('/health-check', Readiness())
