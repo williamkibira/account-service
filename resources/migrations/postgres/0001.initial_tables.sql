@@ -1,0 +1,28 @@
+CREATE TABLE IF NOT EXISTS role_tb (
+	id SERIAL PRIMARY KEY,
+	name VARCHAR NOT NULL UNIQUE,
+	idx BIGSERIAL NOT NULL UNIQUE
+);
+
+CREATE INDEX role_index_idx ON role_tb USING btree(idx);
+
+CREATE TABLE IF NOT EXISTS user_tb (
+	id SERIAL PRIMARY KEY,
+	identifier UUID NOT NULL UNIQUE,
+	first_name VARCHAR NOT NULL,
+	last_name VARCHAR NOT NULL,
+	email_address VARCHAR NOT NULL UNIQUE,
+	photo_identifier VARCHAR NULL,
+	password VARCHAR NOT NULL UNIQUE,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	idx BIGSERIAL NOT NULL UNIQUE
+);
+
+CREATE INDEX user_index_idx ON user_tb USING btree(idx);
+
+CREATE TABLE IF NOT EXISTS user_roles (
+	user_id BIGINT NOT NULL,
+	role_id BIGINT NOT NULL,
+	CONSTRAINT user_roles_pkey PRIMARY KEY (user_id, role_id)
+);
