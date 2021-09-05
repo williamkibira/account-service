@@ -6,7 +6,7 @@ from tests.utilities.resources import FakeFileStorage, FakeEmailClient
 
 
 class TestServer(ServerApplication):
-    def __init__(self, configuration: Configuration, reset_orders:Dict) -> None:
+    def __init__(self, configuration: Configuration, reset_orders: Dict) -> None:
         super(TestServer, self).__init__(configuration=configuration)
         self._reset_orders = reset_orders
 
@@ -14,6 +14,8 @@ class TestServer(ServerApplication):
         super(TestServer, self).initialize_resources()
         self._file_storage = FakeFileStorage()
         self._email_client = FakeEmailClient(reset_orders=self._reset_orders)
+        self._role_repository.save(name="PARTICIPANT")
+        self._role_repository.save(name="ADMINISTRATOR")
 
     def boot_prompt(self):
         build_information = self._configuration.build_information()
