@@ -1,0 +1,16 @@
+CREATE TABLE recovery_tb (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+	user_id INT NOT NULL,
+	due_date  TIMESTAMP NOT NULL,
+	otp VARCHAR NOT NULL,
+	reference VARCHAR NOT NULL,
+	created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+	idx INT,
+	CONSTRAINT user_fkey FOREIGN KEY (user_id) REFERENCES user_tb(id) ON DELETE CASCADE
+);
+
+CREATE TRIGGER IF NOT EXISTS update_recovery_idx AFTER INSERT ON recovery_tb
+		BEGIN
+		    UPDATE recovery_tb SET idx=id WHERE id=NEW.id;
+		END;
+
