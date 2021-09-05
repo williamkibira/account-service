@@ -16,7 +16,7 @@ class Restrict(object):
     def __call__(self, req: falcon.Request, resp: falcon.Response, resource, params):
         token = self.__strip_out_authorization_token(req=req)
         claims_payload = self.__extract_token_claims(encrypted_token=token)
-        claims = json.loads(claims_payload)
+        claims = Claims.parse(claims_payload)
         if self.__is_authorized(claims=claims):
             req.context["principals"] = claims
             req.context["access_token"] = token

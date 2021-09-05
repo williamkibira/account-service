@@ -141,3 +141,6 @@ cython_debug/
 .vscode/
 #IGNORE ALL SQLITE DATABASE FILES
 *.db
+
+#AVOID MOVING KEYS
+resources/keys/*

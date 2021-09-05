@@ -25,6 +25,7 @@ message PasswordResetRequest {
 }
 
 message PasswordReset {
-	string identifier = 1;
-	string password = 2;
+	string reference = 1;
+	string otp = 2;
+	string password = 3;
 }
