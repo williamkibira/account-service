@@ -14,7 +14,7 @@ from app.domain.accounts.emails.client import EmailClient
 from app.domain.accounts.emails.http_client import HttpEmailClient
 from app.domain.accounts.recovery.repository import RecoveryRepository
 from app.domain.accounts.recovery.sql_repository import SQLRecoveryRepository
-from app.domain.accounts.resource import AccountCreationResource, AccountUpdateResource, ProfilePicture, \
+from app.domain.accounts.resource import AccountCreationResource, AccountUpdateResource, \
     ReceivePasswordResetRequest, ResetAccountPassword
 from app.domain.accounts.service import AccountService
 from app.domain.acm.roles.repository import RoleRepository
@@ -66,8 +66,6 @@ class ServerApplication(CoreServerApplication):
         app.add_route('/api/v1/account-service/accounts/register',
                       AccountCreationResource(service=self._account_service))
         app.add_route('/api/v1/account-service/accounts/update', AccountUpdateResource(service=self._account_service))
-        app.add_route('/api/v1/account-service/accounts/profile-picture',
-                      ProfilePicture(service=self._account_service))
         app.add_route('/api/v1/account-service/accounts/request-reset',
                       ReceivePasswordResetRequest(service=self._account_service))
         app.add_route('/api/v1/account-service/accounts/reset', ResetAccountPassword(service=self._account_service))

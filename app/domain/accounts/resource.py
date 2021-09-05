@@ -39,15 +39,6 @@ class AccountUpdateResource:
             resp.body = json.dumps({'error': 417, 'message': str(err)})
 
 
-@falcon.before(Restrict(roles=['PARTICIPANT']))
-class ProfilePicture:
-    def __init__(self, service: AccountService):
-        self.__service = service
-
-    def on_get(self, req: falcon.Request, resp: falcon.Response, identifier: str) -> None:
-        self.__service.fetch_file(resp, identifier)
-
-
 class ReceivePasswordResetRequest:
     def __init__(self, service: AccountService):
         self.__service = service
