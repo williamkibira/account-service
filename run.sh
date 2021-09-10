@@ -8,5 +8,5 @@ gunicorn \
     --bind 0.0.0.0:${PORT} \
     --reload \
     --logger-class app.core.logging.loggers.GunicornLogger \
-'main:run()'
+'app.main:run()'
 

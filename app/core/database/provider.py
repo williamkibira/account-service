@@ -9,7 +9,7 @@ from app.core.database.connection import DataSource
 class SQLProvider(object):
     def __init__(self, uri: str, debug: bool = False) -> None:
         self.__uri = uri
-        self.__engine: Engine
+        self.__engine: Engine = None
         self.__debug = debug
         self.__session: Session = None
 

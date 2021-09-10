@@ -15,7 +15,7 @@ class AccountCreationResource:
             details: RegistrationDetails = RegistrationDetails()
             details.ParseFromString(req.bounded_stream.read())
             identifier: str = self.__service.register(details=details)
-            resp.status = falcon.HTTP_OK
+            resp.status = falcon.HTTP_CREATED
             resp.body = json.dumps({'id': identifier})
         except IOError as err:
             resp.status = falcon.HTTP_417

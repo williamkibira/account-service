@@ -21,7 +21,7 @@ class User(BaseModel):
     password = Column('password', String)
     created_at = Column('created_at', DateTime, default=func.now())
     updated_at = Column('updated_at', DateTime, default=func.now())
-    index = Column('idx', Integer)
+    index = Column('idx', Integer, nullable=False, server_default="default")
     roles = relationship(Role,
                          secondary=association_table,
                          backref="users")

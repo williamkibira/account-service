@@ -21,6 +21,7 @@ from app.domain.acm.roles.repository import RoleRepository
 from app.domain.acm.roles.sql_repository import SQLRoleRepository
 from app.domain.acm.users.repository import UserRepository
 from app.domain.acm.users.sql_repository import SQLUserRepository
+from tests.utilities.resources import FakeFileStorage
 
 
 class ServerApplication(CoreServerApplication):
@@ -41,7 +42,8 @@ class ServerApplication(CoreServerApplication):
             debug=config('DEBUG', default=True, cast=bool))
         database_provider.initialize()
         if not self._configuration.is_in_test_mode():
-            self._file_storage = S3FileStorage(credentials=self._configuration.s3_credentials())
+            # self._file_storage = S3FileStorage(credentials=self._configuration.s3_credentials())
+            self._file_storage = FakeFileStorage()
             self._email_client = HttpEmailClient(self._configuration)
         self._role_repository = SQLRoleRepository(data_source=database_provider.provider())
         self._user_repository = SQLUserRepository(data_source=database_provider.provider())
