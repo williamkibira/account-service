@@ -17,6 +17,7 @@ class User(BaseModel):
     first_name = Column('first_name', String)
     last_name = Column('last_name', String)
     email_address = Column('email_address', String)
+    nickname = Column('nickname', String)
     photo_identifier = Column('photo_identifier', String)
     password = Column('password', String)
     created_at = Column('created_at', DateTime, default=func.now())

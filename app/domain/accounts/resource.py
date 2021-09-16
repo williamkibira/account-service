@@ -38,7 +38,6 @@ class AccountUpdateResource:
             resp.status = falcon.HTTP_417
             resp.body = json.dumps({'error': 417, 'message': str(err)})
 
-
 class ReceivePasswordResetRequest:
     def __init__(self, service: AccountService):
         self.__service = service

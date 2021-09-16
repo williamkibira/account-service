@@ -1,7 +1,6 @@
 import falcon
 from decouple import config
 
-
 from app.configuration import Configuration
 from app.core.database.provider import SQLProvider
 from app.core.health.health_checks import Readiness, Liveness, Ping
@@ -20,6 +19,8 @@ from app.domain.accounts.service import AccountService
 from app.domain.acm.roles.repository import RoleRepository
 from app.domain.acm.roles.sql_repository import SQLRoleRepository
 from app.domain.acm.users.repository import UserRepository
+from app.domain.acm.users.resource import UserFetchResource
+from app.domain.acm.users.service import UserService
 from app.domain.acm.users.sql_repository import SQLUserRepository
 from tests.utilities.resources import FakeFileStorage
 
@@ -35,6 +36,7 @@ class ServerApplication(CoreServerApplication):
         self._user_repository: UserRepository = None
         self._recovery_repository: RecoveryRepository = None
         self._account_service: AccountService = None
+        self._user_service: UserService = None
 
     def initialize_resources(self) -> None:
         database_provider = SQLProvider(
@@ -53,24 +55,30 @@ class ServerApplication(CoreServerApplication):
         )
 
     def initialize_services(self) -> None:
-        self._account_service = self._account_service = AccountService(
+        self._account_service = AccountService(
             file_storage=self._file_storage,
             user_repository=self._user_repository,
             password_handler=self._password_handler,
             recovery_repository=self._recovery_repository,
             email_client=self._email_client
         )
+        self._user_service = UserService(
+            repository=self._user_repository
+        )
 
     def initialize_routes(self, app: falcon.App) -> None:
         app.add_route('/health-check', Readiness())
         app.add_route('/liveness', Liveness())
         app.add_route('/ping', Ping())
+        # ACCOUNT RESOURCES
         app.add_route('/api/v1/account-service/accounts/register',
                       AccountCreationResource(service=self._account_service))
         app.add_route('/api/v1/account-service/accounts/update', AccountUpdateResource(service=self._account_service))
         app.add_route('/api/v1/account-service/accounts/request-reset',
                       ReceivePasswordResetRequest(service=self._account_service))
         app.add_route('/api/v1/account-service/accounts/reset', ResetAccountPassword(service=self._account_service))
+        # USER RESOURCES
+        app.add_route('/api/v1/account-service/users/details', UserFetchResource(service=self._user_service))
 
     def boot_prompt(self):
         build_information = self._configuration.build_information()

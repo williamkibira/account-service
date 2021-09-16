@@ -28,6 +28,7 @@ class UserRepositoryTests(DatabaseResourceTests):
             first_name='Damian',
             last_name='Kasule',
             email_address='damian.kasule@gmail.com',
+            nickname='kaldam',
             password='Fox**234590'
         )
         self.user_repository.save(user=user, roles=['ADMINISTRATOR'])
@@ -36,6 +37,7 @@ class UserRepositoryTests(DatabaseResourceTests):
         self.assertEqual(user.first_name, result.first_name)
         self.assertEqual(user.last_name, result.last_name)
         self.assertEqual(user.email_address, result.email_address)
+        self.assertEqual(user.nickname, result.nickname)
         self.assertEqual(user.password, result.password)
         self.assertIsNotNone(result.created_at)
         self.assertEqual('ADMINISTRATOR', result.roles[0].name)
@@ -49,6 +51,7 @@ class UserRepositoryTests(DatabaseResourceTests):
             identifier=identifier,
             first_name='Gerald',
             last_name='Kamya',
+            nickname='kamge',
             email_address='gerald.kamya@gmail.com',
             password='Gnx**KNO98'
         )
@@ -84,6 +87,7 @@ class UserRepositoryTests(DatabaseResourceTests):
             first_name='Peter',
             last_name='Kamara',
             email_address='peter.kamara@gmail.com',
+            nickname='kampe',
             password='GnVB**KNO98'
         )
         self.user_repository.save(user=user, roles=['GROUP_MEMBER'])
@@ -101,6 +105,7 @@ class UserRepositoryTests(DatabaseResourceTests):
             identifier=identifier,
             first_name='Damian',
             last_name='Kasule',
+            nickname='damka',
             email_address='damian.kasule@gmail.com',
             password='Fox**234590'
         )
@@ -118,6 +123,7 @@ class UserRepositoryTests(DatabaseResourceTests):
             identifier=identifier,
             first_name='Damian',
             last_name='Kasule',
+            nickname='damka',
             email_address='damian.kasule@gmail.com',
             password='Fox**234590'
         )

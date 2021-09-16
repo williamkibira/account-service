@@ -5,12 +5,13 @@ from sqlalchemy.exc import NoResultFound
 from sqlalchemy.orm import joinedload
 
 from app.core.database.connection import DataSource
+from app.core.logging.loggers import LoggerMixin
 from app.domain.acm.roles.models import Role
 from app.domain.acm.users.models import User, association_table
 from app.domain.acm.users.repository import UserRepository
 
 
-class SQLUserRepository(UserRepository):
+class SQLUserRepository(UserRepository, LoggerMixin):
 
     def __init__(self, data_source: DataSource):
         self.__data_source = data_source
@@ -27,7 +28,7 @@ class SQLUserRepository(UserRepository):
             session = self.__data_source.unbound()
             return session.query(User).options(joinedload(User.roles)).filter(User.identifier == identifier).one()
         except NoResultFound as error:
-            print("ERROR: {}".format(error))
+            self._info("ERROR: {}".format(error))
             return None
 
     def update(self, identifier: str, changes: Dict, added_roles: List[str], removed_roles: List[str]):
